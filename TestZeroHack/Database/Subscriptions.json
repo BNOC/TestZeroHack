@@ -1,0 +1,48 @@
+[
+  {
+    "Id": 1,
+    "CustomerId": "81827778434",
+    "Products": [
+      {
+        "Id": 1,
+        "Price": 2.0,
+        "Name": "Product1"
+      },
+      {
+        "Id": 2,
+        "Price": 5.0,
+        "Name": "Product2"
+      },
+      {
+        "Id": 3,
+        "Price": 13.0,
+        "Name": "Product3"
+      }
+    ],
+    "NextDueDate": "2023-08-18T00:00:00Z",
+    "NextPaymentAttemptDate": "2023-08-18T00:00:00Z"
+  },
+  {
+    "Id": 2,
+    "CustomerId": "83757028419",
+    "Products": [
+      {
+        "Id": 4,
+        "Price": 4.0,
+        "Name": "Product1"
+      },
+      {
+        "Id": 5,
+        "Price": 10.0,
+        "Name": "Product2"
+      },
+      {
+        "Id": 6,
+        "Price": 26.0,
+        "Name": "Product3"
+      }
+    ],
+    "NextDueDate": "2023-08-18T00:00:00Z",
+    "NextPaymentAttemptDate": "2023-08-18T00:00:00Z"
+  }
+]

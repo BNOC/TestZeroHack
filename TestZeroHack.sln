@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.4.33213.308
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestZeroHack", "TestZeroHack\TestZeroHack.csproj", "{0CB184B9-0D34-450B-B8AD-B00F53F2CFEC}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{0CB184B9-0D34-450B-B8AD-B00F53F2CFEC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0CB184B9-0D34-450B-B8AD-B00F53F2CFEC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0CB184B9-0D34-450B-B8AD-B00F53F2CFEC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0CB184B9-0D34-450B-B8AD-B00F53F2CFEC}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {4118D5C0-641C-4424-B03C-465CB75335ED}
+	EndGlobalSection
+EndGlobal
