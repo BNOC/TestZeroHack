@@ -15,7 +15,7 @@ namespace TestZeroHack.Controllers
         public JsonSerializerOptions JsonOptions;
         public SubscriptionController()
         {
-            Path = @"C:\Users\Imsea\source\repos\TestProjects\TestZero\TestZeroHack\TestZeroHack\Database\Subscriptions.json";
+            Path = @"C:\Users\SeanKeenan\Source\Repos\TestZeroHack\TestZeroHack\Database\Subscriptions.json";
             JsonOptions = new JsonSerializerOptions
             {
                 WriteIndented = true,
@@ -33,7 +33,7 @@ namespace TestZeroHack.Controllers
                     new Product() { Id = 2, Name="Product2", Price=5.0m }, 
                     new Product() { Id = 3, Name="Product3", Price=13.0m }              
                 }, 
-                NextDueDate = DateTime.UtcNow.AddDays(1).Date, // Setup schedule for tomorrow
+                PeriodEndDate = DateTime.UtcNow.AddDays(1).Date, // Setup schedule for tomorrow
                 NextPaymentAttemptDate = DateTime.UtcNow.AddDays(1).Date // same as it is first attempt
             };
 
@@ -85,9 +85,9 @@ namespace TestZeroHack.Controllers
             var updatedSub = subscriptions.Where(x => x.Id == subscriptionId).FirstOrDefault();
 
             // Just add a day for now
-            var newDate = updatedSub.NextDueDate.AddDays(1);
-            updatedSub.NextDueDate = newDate;
-            updatedSub.NextPaymentAttemptDate = newDate;
+            var newDate = updatedSub.PeriodEndDate.AddMonths(1);
+            updatedSub.PeriodEndDate = newDate;
+            updatedSub.NextPaymentAttemptDate = updatedSub.PeriodEndDate.AddDays(-8);
 
             // record subscription
             RecordSubscription(updatedSub);

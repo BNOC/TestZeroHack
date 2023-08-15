@@ -12,7 +12,7 @@ var customerController = new CustomerController();
 // Test 
 var takingInitialPayment = false;
 var attemptingRecurring = true;
-var daysFromTodayToAttempt = 3;
+var daysFromTodayToAttempt = 8;
 
 #region InitialPayment
 if (takingInitialPayment)
@@ -74,7 +74,7 @@ if (attemptingRecurring) {
             SubscriptionId = duePayments[i].Id,
             CustomerId = duePayments[i].CustomerId,
             Price = duePayments[i].Products.Sum(x => x.Price),
-            PaymentMethodNonce = "fake-valid-nonce",
+            PaymentMethodNonce = "fake--nonce",
         });
     }
 
@@ -92,7 +92,8 @@ if (attemptingRecurring) {
                 // Record payment record
                 // update nextpaymentdate
                 var newSub = subscriptionController.UpdateSubscriptionRecord(duePaymentRequest.SubscriptionId);
-                Console.WriteLine("UpdatedSub should be +1d ahead of the last " + newSub.NextDueDate.AddDays(1));
+                Console.WriteLine("UpdatedSub PeriodEndDate should be +1m ahead of the last " + newSub.PeriodEndDate.AddMonths(1));
+                Console.WriteLine("UpdatedSub NextPaymentDate should be +1m-8 ahead of the last " + newSub.PeriodEndDate.AddMonths(1).AddDays(-8));
             }
             else
             {
@@ -100,6 +101,23 @@ if (attemptingRecurring) {
 
                 // Handle failures, will need to change the nonce to other fake nonces and make adjustments in a few places
                 // https://developer.paypal.com/braintree/docs/guides/recurring-billing/testing-go-live/dotnet/
+                // Send them to UI to make a payment
+                // Go to braintree and make payment
+                Console.WriteLine("We're in here");
+
+                duePaymentRequest.PaymentMethodNonce = "fake-valid-nonce";
+                var newPaymentResult2 = paymentController.Checkout(duePaymentRequest);
+
+                Console.WriteLine("One off payment " + newPaymentResult2);
+
+                if ((string)newPaymentResult2 == "Succeded")
+                {
+                    // Record payment record
+                    // update nextpaymentdate
+                    var newSub = subscriptionController.UpdateSubscriptionRecord(duePaymentRequest.SubscriptionId);
+                    Console.WriteLine("UpdatedSub PeriodEndDate should be +1m ahead of the last " + newSub.PeriodEndDate.AddMonths(1));
+                    Console.WriteLine("UpdatedSub NextPaymentDate should be +1m-8 ahead of the last " + newSub.PeriodEndDate.AddMonths(1).AddDays(-8));
+                }
             }
         }
         catch (Exception x)
