@@ -22,22 +22,44 @@ namespace TestZeroHack.Controllers
             };
         }
 
-        public Subscription Setup(string customerId)
+        public Subscription Setup(string customerId, int deferredStartDays = 0)
         {
             var subscription = new Subscription()
             {
                 Id = 1, 
                 CustomerId = customerId,
                 Products= new List<Product>() { 
-                    new Product() { Id = 1, Name="Product1", Price=2.0m }, 
-                    new Product() { Id = 2, Name="Product2", Price=5.0m }, 
-                    new Product() { Id = 3, Name="Product3", Price=13.0m }              
+                    new Product() { Id = 1, Name="Product1", Price=2.0m, StartDate = DateTime.UtcNow }, 
+                    new Product() { Id = 2, Name="Product2", Price=5.0m, StartDate = DateTime.UtcNow }, 
+                    new Product() { 
+                        Id = 3, Name="Product3", Price=13.0m,
+                        StartDate = deferredStartDays != 0 ? DateTime.UtcNow.AddDays(deferredStartDays) : DateTime.UtcNow, 
+                    }              
                 }, 
-                PeriodEndDate = DateTime.UtcNow.AddDays(1).Date, // Setup schedule for tomorrow
-                NextPaymentAttemptDate = DateTime.UtcNow.AddDays(1).Date // same as it is first attempt
+                StartDate = DateTime.UtcNow,
             };
+            subscription.PeriodEndDate = subscription.Products.OrderByDescending(p => p.StartDate).FirstOrDefault().StartDate.AddMonths(1);
+            subscription.NextPaymentAttemptDate = subscription.PeriodEndDate.AddDays(-8);
 
             return subscription;
+        }
+
+        public decimal ProRataProducts(Subscription subscription)
+        {
+            // get highest start date product
+            // compare it against sub start date
+
+            var highestStartDate = subscription.Products.OrderByDescending(p => p.StartDate).FirstOrDefault().StartDate;
+            var products = subscription.Products.Where(x => x.StartDate < highestStartDate).ToList();
+
+            var proRataPrice = products.Sum(x => x.Price);
+
+
+            Console.WriteLine(proRataPrice);
+
+            // sub start date 
+            // period end date
+            return (((proRataPrice * 12) / 365) * 10);
         }
 
         // Write to db

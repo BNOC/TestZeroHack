@@ -11,7 +11,8 @@ var customerController = new CustomerController();
 
 // Test 
 var takingInitialPayment = false;
-var attemptingRecurring = true;
+var takingInitialDeferredPayment = false;
+var attemptingRecurring = false;
 var daysFromTodayToAttempt = 8;
 
 #region InitialPayment
@@ -55,13 +56,70 @@ if (takingInitialPayment)
 }
 #endregion InitialPayment
 
+#region InitialDeferredPayment
+if (takingInitialDeferredPayment)
+{
+
+    // Setup a customer
+    var newCustomer = customerController.Setup();
+
+    // Setup a subscription, select products etc
+    var newSubscription = subscriptionController.Setup(newCustomer.Id, 10);
+    var proRataPrice = subscriptionController.ProRataProducts(newSubscription);
+
+    var totalPrice = proRataPrice + newSubscription.Products.Sum(x => x.Price);
+
+    // Handle initial payment
+    //// Setup paymentRequest
+    PaymentRequest newPayment = new()
+    {
+        CustomerId = newSubscription.CustomerId,
+        Price = totalPrice,
+        PaymentMethodNonce = "fake-valid-nonce"
+    };
+
+    //// Attempt payment
+    try
+    {
+        var newPaymentResult = paymentController.Checkout(newPayment);
+
+        if ((string)newPaymentResult == "Succeded")
+        {
+            // Record subscription
+            subscriptionController.RecordSubscription(newSubscription);
+        }
+        else
+        {
+            Console.WriteLine("Something went wrong processing the payment, try again.");
+            // Not using this for batch processing so no need to handle errors here for now
+        }
+    }
+    catch (Exception x)
+    {
+        Console.WriteLine(x);
+    }
+}
+#endregion InitialDeferredPayment
+
+#region Cancellation
+// Cancel day before payment due
+
+var subscription = subscriptionController.Setup("81827778434");
+
+Console.WriteLine($"Do you want to cancel this subscription? Access to {subscription.Products.Count} products will end on {subscription.PeriodEndDate}");
+var answer = Console.ReadLine();
+if (answer == "1")
+{
+    subscription.NextPaymentAttemptDate = null;
+}
+
+var newDate = subscription.NextPaymentAttemptDate == null ? "null" : subscription.NextPaymentAttemptDate.ToString();
+Console.WriteLine($"Next payment date has been updated to {newDate}");
+#endregion Cancellation
+
 #region RecurringPayments
-// Recurring Payments
-// Manipulate the date to +1
-// Find all payments due from json file with todays date
-// Process payment
-// update schedule against subscription
-if (attemptingRecurring) { 
+if (attemptingRecurring)
+{
     var tc = new TestClock(DateTime.UtcNow.AddDays(daysFromTodayToAttempt));
     var duePayments = subscriptionController.GetDuePayments(tc);
 
@@ -127,4 +185,3 @@ if (attemptingRecurring) {
     }
 }
 #endregion RecurringPayments
-

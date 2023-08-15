@@ -13,8 +13,9 @@ namespace TestZeroHack.Models
 
         public IList<Product> Products { get; set; } = new List<Product>();
 
+        public DateTime StartDate { get; set; } // Static month -8, every first attempt
         public DateTime PeriodEndDate { get; set; } // Static month -8, every first attempt
-        public DateTime NextPaymentAttemptDate { get; set; } // Attempt, retry
+        public DateTime? NextPaymentAttemptDate { get; set; } // Attempt, retry
 
     }
 }
