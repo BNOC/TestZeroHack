@@ -13,7 +13,9 @@ var customerController = new CustomerController();
 var takingInitialPayment = false;
 var takingInitialDeferredPayment = false;
 var attemptingRecurring = false;
-var daysFromTodayToAttempt = 8;
+var attemptingRecurringInsurance = false;
+var cancelJustInsuranceProduct = false;
+var daysFromTodayToAttempt = 1;
 
 #region InitialPayment
 if (takingInitialPayment)
@@ -102,19 +104,19 @@ if (takingInitialDeferredPayment)
 #endregion InitialDeferredPayment
 
 #region Cancellation
-// Cancel day before payment due
+//// Cancel day before payment due
 
-var subscription = subscriptionController.Setup("81827778434");
+//var subscription = subscriptionController.Setup("81827778434");
 
-Console.WriteLine($"Do you want to cancel this subscription? Access to {subscription.Products.Count} products will end on {subscription.PeriodEndDate}");
-var answer = Console.ReadLine();
-if (answer == "1")
-{
-    subscription.NextPaymentAttemptDate = null;
-}
+//Console.WriteLine($"Do you want to cancel this subscription? Access to {subscription.Products.Count} products will end on {subscription.PeriodEndDate}");
+//var answer = Console.ReadLine();
+//if (answer == "1")
+//{
+//    subscription.NextPaymentAttemptDate = null;
+//}
 
-var newDate = subscription.NextPaymentAttemptDate == null ? "null" : subscription.NextPaymentAttemptDate.ToString();
-Console.WriteLine($"Next payment date has been updated to {newDate}");
+//var newDate = subscription.NextPaymentAttemptDate == null ? "null" : subscription.NextPaymentAttemptDate.ToString();
+//Console.WriteLine($"Next payment date has been updated to {newDate}");
 #endregion Cancellation
 
 #region RecurringPayments
@@ -185,3 +187,88 @@ if (attemptingRecurring)
     }
 }
 #endregion RecurringPayments
+
+
+
+#region RecurringPaymentsInsurance
+// Attempt payment
+if (attemptingRecurringInsurance)
+{
+    var tc = new TestClock(DateTime.UtcNow.AddDays(daysFromTodayToAttempt));
+    var duePayments = subscriptionController.GetDuePayments(tc);
+
+    var duePaymentsThatHaveInsurance = new List<Subscription>();
+    foreach(var due in duePayments)
+    {
+        if (due.Products.Where(x => x.Name == "Insurance").Any())
+        {
+            duePaymentsThatHaveInsurance.Add(due);
+        }
+    }
+
+
+    List<PaymentRequest> duePaymentsRequestList = new();
+    for (var i = 0; i < duePaymentsThatHaveInsurance.Count; i++)
+    {
+        duePaymentsRequestList.Add(new PaymentRequest()
+        {
+            SubscriptionId = duePaymentsThatHaveInsurance[i].Id,
+            CustomerId = duePaymentsThatHaveInsurance[i].CustomerId,
+            Price = duePaymentsThatHaveInsurance[i].Products.Sum(x => x.Price),
+            PaymentMethodNonce = "fake-valid-nonce",
+        });
+    }
+
+    foreach (var duePaymentRequest in duePaymentsRequestList)
+    {
+        try
+        {
+            var newPaymentResult = paymentController.Checkout(duePaymentRequest);
+
+            if ((string)newPaymentResult == "Succeded")
+            {
+                // Record payment record
+                // update nextpaymentdate
+                //var newSub = subscriptionController.UpdateSubscriptionRecord(duePaymentRequest.SubscriptionId);
+
+                Console.WriteLine("Processed payment");
+            }
+            else
+            {
+                Console.WriteLine("Something went wrong processing the renewal, try again.");
+
+            }
+        }
+        catch (Exception x)
+        {
+            Console.WriteLine(x);
+        }
+    }
+}
+
+#endregion
+
+#region CancelJustInsuranceProduct 
+if (cancelJustInsuranceProduct)
+{
+    // Cancel day before payment due
+
+    var justInsuranceSubs = subscriptionController.GetSubsContainingInsurance();
+    var singleInsuranceSub = justInsuranceSubs.Single();
+
+    Console.WriteLine($"Do you want to cancel your insurance?");
+    var answer = Console.ReadLine();
+    if (answer == "1")
+    {
+        var insuranceProduct = singleInsuranceSub.Products.Where(x => x.Name == "Insurance").First();
+        insuranceProduct.IsActive = false;
+
+
+    }
+
+    // Update record in json file
+    // test recurring payment again for updated price
+
+    Console.WriteLine($"Next price is ...");
+}
+#endregion CancelJustInsuranceProduct

@@ -17,13 +17,13 @@
       },
       {
         "Id": 3,
-        "Price": 13.0,
-        "Name": "Product3",
-        "StartDate": "2023-08-25T00:00:00Z"
+        "Price": 23.0,
+        "Name": "Insurance",
+        "StartDate": "2023-08-15T00:00:00Z"
       }
     ],
-    "PeriodEndDate": "2023-09-30T00:00:00Z",
-    "NextPaymentAttemptDate": "2023-09-22T00:00:00Z"
+    "PeriodEndDate": "2023-08-16T00:00:00Z",
+    "NextPaymentAttemptDate": "2023-08-16T00:00:00Z"
   },
   {
     "Id": 2,
@@ -45,10 +45,10 @@
         "Id": 6,
         "Price": 26.0,
         "Name": "Product3",
-        "StartDate": "2023-08-25T00:00:00Z"
+        "StartDate": "2023-08-15T00:00:00Z"
       }
     ],
-    "PeriodEndDate": "2023-09-30T00:00:00Z",
-    "NextPaymentAttemptDate": "2023-09-22T00:00:00Z"
+    "PeriodEndDate": "2023-08-16T00:00:00Z",
+    "NextPaymentAttemptDate": "2023-08-16T00:00:00Z"
   }
 ]

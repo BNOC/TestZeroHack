@@ -120,5 +120,23 @@ namespace TestZeroHack.Controllers
 
             return JsonSerializer.Deserialize<List<Subscription>>(readText).Where(x => x.Id == subscriptionId).FirstOrDefault();
         }
+
+        public List<Subscription> GetSubsContainingInsurance()
+        {
+            string readText = File.ReadAllText(Path);
+
+            var subscriptions = JsonSerializer.Deserialize<List<Subscription>>(readText);
+
+            var subsWithInusrnace = new List<Subscription>();
+            foreach (var sub in subscriptions)
+            {
+                if (sub.Products.Where(x => x.Name == "Insurance").Any())
+                {
+                    subsWithInusrnace.Add(sub);
+                }
+            }
+
+            return subsWithInusrnace;
+        }
     }
 }
