@@ -10,15 +10,13 @@
   <ItemGroup>
     <PackageReference Include="Braintree" Version="5.18.0" />
     <PackageReference Include="IClock" Version="1.0.1" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Microsoft.AspNet.WebApi.Core" Version="5.2.9" />
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Database\" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\TestZeroRecurringPaymentProcessor\TestZeroPaymentService.csproj" />
     <ProjectReference Include="..\TestZeroSubscriptionService\TestZeroSubscriptionService.csproj" />
   </ItemGroup>
 

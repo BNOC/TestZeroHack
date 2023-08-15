@@ -1,6 +1,6 @@
 ﻿using Braintree;
 
-namespace TestZeroHack.Models
+namespace TestZeroPaymentService.Models
 {
     public class BraintreeConfiguration
     {

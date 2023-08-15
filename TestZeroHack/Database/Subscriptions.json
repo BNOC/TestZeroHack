@@ -1,54 +1,32 @@
 [
   {
-    "Id": 1,
-    "CustomerId": "81827778434",
+    "Id": 1314570,
+    "CustomerId": "12323973564",
     "Products": [
       {
         "Id": 1,
         "Price": 2.0,
-        "Name": "Product1",
-        "StartDate": "2023-08-25T00:00:00Z"
+        "Name": "Setup",
+        "StartDate": "2023-08-15T23:20:30.7967643Z",
+        "IsActive": true
       },
       {
         "Id": 2,
         "Price": 5.0,
-        "Name": "Product2",
-        "StartDate": "2023-08-25T00:00:00Z"
+        "Name": "Charge",
+        "StartDate": "2023-08-15T23:20:30.7968367Z",
+        "IsActive": true
       },
       {
         "Id": 3,
-        "Price": 23.0,
-        "Name": "Insurance",
-        "StartDate": "2023-08-15T00:00:00Z"
+        "Price": 13.0,
+        "Name": "AProduct",
+        "StartDate": "2023-08-15T23:20:30.7968369Z",
+        "IsActive": true
       }
     ],
-    "PeriodEndDate": "2023-08-16T00:00:00Z",
-    "NextPaymentAttemptDate": "2023-08-16T00:00:00Z"
-  },
-  {
-    "Id": 2,
-    "CustomerId": "83757028419",
-    "Products": [
-      {
-        "Id": 4,
-        "Price": 4.0,
-        "Name": "Product1",
-        "StartDate": "2023-08-25T00:00:00Z"
-      },
-      {
-        "Id": 5,
-        "Price": 10.0,
-        "Name": "Product2",
-        "StartDate": "2023-08-25T00:00:00Z"
-      },
-      {
-        "Id": 6,
-        "Price": 26.0,
-        "Name": "Product3",
-        "StartDate": "2023-08-15T00:00:00Z"
-      }
-    ],
-    "PeriodEndDate": "2023-08-16T00:00:00Z",
-    "NextPaymentAttemptDate": "2023-08-16T00:00:00Z"
+    "StartDate": "2023-08-15T23:20:33.1571213Z",
+    "PeriodEndDate": "2023-09-15T23:20:33.1571486Z",
+    "NextPaymentAttemptDate": "2023-09-07T23:20:33.1571821Z"
   }
 ]

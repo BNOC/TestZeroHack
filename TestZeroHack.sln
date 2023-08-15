@@ -3,7 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.4.33213.308
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestZeroHack", "TestZeroHack\TestZeroHack.csproj", "{0CB184B9-0D34-450B-B8AD-B00F53F2CFEC}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TestZeroHack", "TestZeroHack\TestZeroHack.csproj", "{0CB184B9-0D34-450B-B8AD-B00F53F2CFEC}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestZeroPaymentService", "TestZeroRecurringPaymentProcessor\TestZeroPaymentService.csproj", "{446F2035-0AD0-4895-8799-84B983F64927}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestZeroSubscriptionService", "TestZeroSubscriptionService\TestZeroSubscriptionService.csproj", "{C0DC5632-0D68-4201-83E6-ED04E463EDA7}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +19,14 @@ Global
 		{0CB184B9-0D34-450B-B8AD-B00F53F2CFEC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0CB184B9-0D34-450B-B8AD-B00F53F2CFEC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0CB184B9-0D34-450B-B8AD-B00F53F2CFEC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{446F2035-0AD0-4895-8799-84B983F64927}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{446F2035-0AD0-4895-8799-84B983F64927}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{446F2035-0AD0-4895-8799-84B983F64927}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{446F2035-0AD0-4895-8799-84B983F64927}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C0DC5632-0D68-4201-83E6-ED04E463EDA7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C0DC5632-0D68-4201-83E6-ED04E463EDA7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C0DC5632-0D68-4201-83E6-ED04E463EDA7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C0DC5632-0D68-4201-83E6-ED04E463EDA7}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -1,6 +1,7 @@
 ﻿using Braintree;
 using System.Web.Http;
 using TestZeroHack.Models;
+using TestZeroPaymentService.Models;
 
 namespace TestZeroHack.Controllers
 {
@@ -11,24 +12,22 @@ namespace TestZeroHack.Controllers
         public CustomerController()
         {
             _braintreeConfig= new BraintreeConfiguration();
-        }
+        } 
 
-        public Customer Setup()
+        public Customer? Setup(JourneyDetails details)
         {
+            // Customer setup
             var request = new CustomerRequest
             {
-                FirstName = "Sean",
-                LastName = "Keenan",
-                Email = "SK@example.com",
+                FirstName = details.FirstName,
+                LastName = details.LastName,
+                Email = details.Email,
             };
             Result<Customer> result = _braintreeConfig.GetGateway().Customer.Create(request);
 
-            bool success = result.IsSuccess();
-            // true
+            bool customerSuccess = result.IsSuccess();
 
-            string customerId = result.Target.Id;
-            // e.g. 594019
-
+            // Card setup
             var creditCardRequest = new CreditCardRequest
             {
                 CustomerId = result.Target.Id,
@@ -37,10 +36,15 @@ namespace TestZeroHack.Controllers
                 CVV = "123"
             };
 
-            CreditCard creditCardToken = _braintreeConfig.GetGateway().CreditCard.Create(creditCardRequest).Target;
+            Result<CreditCard> creditCardResult = _braintreeConfig.GetGateway().CreditCard.Create(creditCardRequest);
 
-            return result.Target;
+            bool ccSuccess = creditCardResult.IsSuccess();
+
+
+            // Check customer and card were setup and return the customer if they were
+            var customerAndCardSetup = customerSuccess && ccSuccess;
+
+            return customerAndCardSetup ? result.Target : null;
         }
-
     }
 }

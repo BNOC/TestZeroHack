@@ -1,4 +1,4 @@
-﻿namespace TestZeroHack.Models
+﻿namespace TestZeroSubscriptionService.Models
 {
     public class Product
     {

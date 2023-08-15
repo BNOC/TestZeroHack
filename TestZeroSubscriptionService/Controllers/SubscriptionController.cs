@@ -1,13 +1,7 @@
-﻿using IClock;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Text.Json;
-using System.Threading.Tasks;
-using TestZeroHack.Models;
+﻿using System.Text.Json;
+using TestZeroSubscriptionService.Models;
 
-namespace TestZeroHack.Controllers
+namespace TestZeroSubscriptionService.Controllers
 {
     public class SubscriptionController
     {
@@ -15,7 +9,7 @@ namespace TestZeroHack.Controllers
         public JsonSerializerOptions JsonOptions;
         public SubscriptionController()
         {
-            Path = @"C:\Users\SeanKeenan\Source\Repos\TestZeroHack\TestZeroHack\Database\Subscriptions.json";
+            Path = @"C:\Users\Imsea\source\repos\TestProjects\TestZero\TestZeroHack\TestZeroHack\Database\Subscriptions.json";
             JsonOptions = new JsonSerializerOptions
             {
                 WriteIndented = true,
@@ -62,65 +56,6 @@ namespace TestZeroHack.Controllers
             return (((proRataPrice * 12) / 365) * 10);
         }
 
-        // Write to db
-        public void RecordSubscription(Subscription subscription)
-        {
-            if (!File.Exists(Path))
-            {
-                File.Create(Path);
-            }
-
-            // Get existing records and update
-            string readText = File.ReadAllText(Path);
-
-            var subscriptions = JsonSerializer.Deserialize<List<Subscription>>(readText);
-
-            // If it doesn't exist already add it
-            if(subscriptions.Where(x => x.Id == subscription.Id).Any())
-            {
-                subscriptions.Add(subscription);
-            }
-
-            // Serialize and record
-            var updatedSubscriptions = JsonSerializer.Serialize(subscriptions, JsonOptions);
-
-            File.WriteAllText(Path, updatedSubscriptions);
-        }
-
-        // Read db and get list of subscriptions where payment is due
-        public List<Subscription> GetDuePayments(TestClock tc)
-        {
-            string readText = File.ReadAllText(Path);
-
-            var subscriptions = JsonSerializer.Deserialize<List<Subscription>>(readText);
-            
-            return subscriptions.Where(x => x.NextPaymentAttemptDate == tc.GetTime().Date).ToList();
-        }
-
-        // Update subscription after successful renewal 
-        public Subscription UpdateSubscriptionRecord(int subscriptionId)
-        {
-            string readText = File.ReadAllText(Path);
-
-            var subscriptions = JsonSerializer.Deserialize<List<Subscription>>(readText);
-
-            var updatedSub = subscriptions.Where(x => x.Id == subscriptionId).FirstOrDefault();
-
-            // Just add a day for now
-            var newDate = updatedSub.PeriodEndDate.AddMonths(1);
-            updatedSub.PeriodEndDate = newDate;
-            updatedSub.NextPaymentAttemptDate = updatedSub.PeriodEndDate.AddDays(-8);
-
-            // record subscription
-            RecordSubscription(updatedSub);
-            var updatedSubscriptions = JsonSerializer.Serialize(subscriptions, JsonOptions);
-
-            File.WriteAllText(Path, updatedSubscriptions);
-
-
-            return JsonSerializer.Deserialize<List<Subscription>>(readText).Where(x => x.Id == subscriptionId).FirstOrDefault();
-        }
-
         public List<Subscription> GetSubsContainingInsurance()
         {
             string readText = File.ReadAllText(Path);
@@ -137,6 +72,22 @@ namespace TestZeroHack.Controllers
             }
 
             return subsWithInusrnace;
+        }
+
+        public Subscription CreateSubscription(Braintree.Customer customer, List<Product> products)
+        {
+            Random rand = new Random();
+
+            return new Subscription()
+            {
+                Id = rand.Next(1, 1500000), 
+                CustomerId = customer.Id,
+                Products = products,
+                StartDate = DateTime.UtcNow,
+                PeriodEndDate = DateTime.UtcNow.AddMonths(1),
+                NextPaymentAttemptDate = DateTime.UtcNow.AddMonths(1).AddDays(-8),
+            };
+
         }
     }
 }
