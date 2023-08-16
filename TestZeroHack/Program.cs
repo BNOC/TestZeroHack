@@ -7,7 +7,7 @@ using TestZeroRecordService.Controllers;
 using TestZeroSubscriptionService.Controllers;
 using TestZeroSubscriptionService.Models;
 
-Console.WriteLine("Hello");
+Console.WriteLine("Running TestZeroHack");
 
 // Program setup
 var subscriptionController = new SubscriptionController();
@@ -18,7 +18,7 @@ var recordController = new RecordController();
 
 #region Journey Setup + Braintree Customer hack
 // Setup JourneyDetails model as if we went through the flow
-// Do this with console.readline and output product options if we want to go harder with it
+// Do this with console.readline and output product options etc if we want to go harder with it
 var journeyDetails = new JourneyDetails()
 {
     FirstName = "Sean",

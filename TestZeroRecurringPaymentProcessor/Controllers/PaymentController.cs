@@ -90,12 +90,17 @@ namespace TestZeroPaymentService.Controllers
         /// </summary>
         /// <param name="tc"></param>
         /// <returns></returns>
-        public List<TestZeroSubscriptionService.Models.Subscription> GetDuePayments(TestClock tc)
+        public List<TestZeroSubscriptionService.Models.Subscription>? GetDuePayments(TestClock tc)
         {
             string readText = File.ReadAllText(_subscriptionController.Path);
-            var subscriptions = JsonSerializer.Deserialize<List<TestZeroSubscriptionService.Models.Subscription>>(readText);
+            if (readText != string.Empty)
+            {
+                var subscriptions = JsonSerializer.Deserialize<List<TestZeroSubscriptionService.Models.Subscription>>(readText);
+                return subscriptions.Where(x => x.NextPaymentAttemptDate.Value.Date == tc.GetTime().Date).ToList();
+            }
 
-            return subscriptions.Where(x => x.NextPaymentAttemptDate.Value.Date == tc.GetTime().Date).ToList();
+            Console.WriteLine("No payments found, check TestZeroHack.Database.Subscriptions.Json and run the TestZeroHack Program to populate");
+            return null;
         }
 
         /// <summary>

@@ -4,6 +4,8 @@ using TestZeroPaymentService.Controllers;
 using TestZeroPaymentService.Models;
 using TestZeroRecordService.Controllers;
 
+Console.WriteLine("Running TestZeroPaymentService");
+
 var paymentsController = new PaymentController();
 var recordController = new RecordController();
 
@@ -16,18 +18,21 @@ var tc = new TestClock(DateTime.UtcNow.AddDays(daysFromTodayToAttempt));
 // Get all payments from the sub db where the NextPaymentDate matches
 var duePayments = paymentsController.GetDuePayments(tc);
 
-// Create a list of paymentRequests to process
-List<PaymentRequest> duePaymentRequests = new();
-for (var i = 0; i < duePayments.Count; i++)
+if (duePayments != null)
 {
-    duePaymentRequests.Add(new PaymentRequest()
+    // Create a list of paymentRequests to process
+    List<PaymentRequest> duePaymentRequests = new();
+    for (var i = 0; i < duePayments.Count; i++)
     {
-        SubscriptionId = duePayments[i].Id,
-        CustomerId = duePayments[i].CustomerId,
-        Price = duePayments[i].Products.Sum(x => x.Price),
-        PaymentMethodNonce = "fake-valid-nonce",
-    });
+        duePaymentRequests.Add(new PaymentRequest()
+        {
+            SubscriptionId = duePayments[i].Id,
+            CustomerId = duePayments[i].CustomerId,
+            Price = duePayments[i].Products.Sum(x => x.Price),
+            PaymentMethodNonce = "fake-valid-nonce",
+        });
+    }
+    // Process payments
+    var paymentResults = paymentsController.ProcessDuePayments(duePaymentRequests);
 }
-// Process payments
-var paymentResults = paymentsController.ProcessDuePayments(duePaymentRequests);
 #endregion RecurringPayments
