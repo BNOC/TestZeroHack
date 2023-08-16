@@ -124,14 +124,15 @@ namespace TestZeroPaymentService.Controllers
                 // Update sub records with new dates
                 foreach (var paymentResult in paymentResults)
                 {
+
+                    var subscription = _subscriptionController.Get(duePaymentRequest.SubscriptionId);
                     if (paymentResult.IsSuccess())
                     {
                         successfulPayments++;
                         // UpdateSub
-                        _recordController.UpdateSubscriptionRecord(duePaymentRequest.SubscriptionId);
+                        _recordController.UpdateSubscriptionRecord(subscription);
                     }
 
-                    var subscription = _subscriptionController.Get(duePaymentRequest.SubscriptionId);
                     // Record Transaction
                     _recordController.RecordTransaction(paymentResult.Target, subscription);
                 }
@@ -139,6 +140,36 @@ namespace TestZeroPaymentService.Controllers
 
             Console.WriteLine($"{successfulPayments} Successful Payments taken");
             return paymentResults;
+        }
+
+        public void RecurringPayments() {
+            var daysFromTodayToAttempt = 1;
+
+            #region RecurringPayments
+            // Set system date to whatever is relevant for testing
+            var tc = new TestClock(DateTime.UtcNow.AddDays(daysFromTodayToAttempt));
+            // Get all payments from the sub db where the NextPaymentDate matches
+            var duePayments = this.GetDuePayments(tc);
+
+            if (duePayments != null)
+            {
+                // Create a list of paymentRequests to process
+                List<PaymentRequest> duePaymentRequests = new();
+                for (var i = 0; i < duePayments.Count; i++)
+                {
+                    duePaymentRequests.Add(new PaymentRequest()
+                    {
+                        SubscriptionId = duePayments[i].Id,
+                        CustomerId = duePayments[i].CustomerId,
+                        Price = duePayments[i].Products.Where(x => x.IsActive).Sum(x => x.Price),
+                        PaymentMethodNonce = "fake-valid-nonce",
+                    });
+                }
+                // Process payments
+                var paymentResults = this.ProcessDuePayments(duePaymentRequests);
+            }
+            #endregion RecurringPayments
+
         }
     }
 }

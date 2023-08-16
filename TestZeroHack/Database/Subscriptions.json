@@ -1,0 +1,74 @@
+[
+  {
+    "Id": 1349791,
+    "CustomerId": "87047900744",
+    "Products": [
+      {
+        "Id": 1,
+        "ProductType": "Product",
+        "Price": 2.0,
+        "Name": "Setup",
+        "StartDate": "2023-08-16T10:21:54.142088Z",
+        "IsActive": true,
+        "PeriodEndDate": "2023-08-24T10:21:56.9324222Z"
+      },
+      {
+        "Id": 2,
+        "ProductType": "Product",
+        "Price": 5.0,
+        "Name": "Charge",
+        "StartDate": "2023-08-16T10:21:54.1422263Z",
+        "IsActive": true,
+        "PeriodEndDate": "2023-08-24T10:21:56.9324222Z"
+      },
+      {
+        "Id": 3,
+        "ProductType": "Insurance",
+        "Price": 13.0,
+        "Name": "AProduct",
+        "StartDate": "2023-08-16T10:21:54.1422266Z",
+        "IsActive": true,
+        "PeriodEndDate": "2023-08-24T10:21:56.9324222Z"
+      }
+    ],
+    "StartDate": "2023-07-24T10:21:56.9323888Z",
+    "PeriodEndDate": "2023-08-24T10:21:56.9324222Z",
+    "NextPaymentAttemptDate": "2023-08-16T10:21:56.9324689Z"
+  },
+  {
+    "Id": 52027,
+    "CustomerId": "86393376119",
+    "Products": [
+      {
+        "Id": 1,
+        "ProductType": "Product",
+        "Price": 2.0,
+        "Name": "Setup",
+        "StartDate": "2023-08-16T10:23:48.4910746Z",
+        "IsActive": true,
+        "PeriodEndDate": "2023-08-24T10:21:56.9324222Z"
+      },
+      {
+        "Id": 2,
+        "ProductType": "Product",
+        "Price": 5.0,
+        "Name": "Charge",
+        "StartDate": "2023-08-16T10:23:48.491161Z",
+        "IsActive": true,
+        "PeriodEndDate": "2023-08-24T10:21:56.9324222Z"
+      },
+      {
+        "Id": 3,
+        "ProductType": "Insurance",
+        "Price": 13.0,
+        "Name": "AProduct",
+        "StartDate": "2023-08-16T10:23:48.4911612Z",
+        "IsActive": true,
+        "PeriodEndDate": "2023-08-24T10:21:56.9324222Z"
+      }
+    ],
+    "StartDate": "2023-07-24T10:21:56.9323888Z",
+    "PeriodEndDate": "2023-08-24T10:21:56.9324222Z",
+    "NextPaymentAttemptDate": "2023-08-16T10:21:56.9324689Z"
+  }
+]

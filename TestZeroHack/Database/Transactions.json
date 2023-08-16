@@ -1,0 +1,22 @@
+[
+  {
+    "SubscriptionId": 1349791,
+    "CustomerId": "87047900744",
+    "Amount": 20.00,
+    "TransactionId": "bhd1w8pt",
+    "GraphQLId": "dHJhbnNhY3Rpb25fYmhkMXc4cHQ",
+    "ProcessorResponseText": "Approved",
+    "NetworkTransactionId": "020230816102156",
+    "CreatedAt": "2023-08-16T10:21:56Z"
+  },
+  {
+    "SubscriptionId": 52027,
+    "CustomerId": "86393376119",
+    "Amount": 20.00,
+    "TransactionId": "cpf0wmhc",
+    "GraphQLId": "dHJhbnNhY3Rpb25fY3BmMHdtaGM",
+    "ProcessorResponseText": "Approved",
+    "NetworkTransactionId": "020230816102507",
+    "CreatedAt": "2023-08-16T10:25:07Z"
+  }
+]

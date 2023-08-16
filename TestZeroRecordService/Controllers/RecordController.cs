@@ -12,8 +12,8 @@ namespace TestZeroRecordService.Controllers
 
         public RecordController()
         {
-            SubscriptionsRecordPath = @"C:\Users\Imsea\source\repos\TestProjects\TestZero\TestZeroHack\TestZeroHack\Database\Subscriptions.json";
-            TransactionsRecordPath = @"C:\Users\Imsea\source\repos\TestProjects\TestZero\TestZeroHack\TestZeroHack\Database\Transactions.json";
+            SubscriptionsRecordPath = @"C:\Development\Practise\TestZeroHack\TestZeroHack\Database\Subscriptions.json";
+            TransactionsRecordPath = @"C:\Development\Practise\TestZeroHack\TestZeroHack\Database\Transactions.json";
             JsonOptions = new JsonSerializerOptions
             {
                 WriteIndented = true,
@@ -44,7 +44,7 @@ namespace TestZeroRecordService.Controllers
                 else
                 {
                     // Update existing record
-                    UpdateSubscriptionRecord(subscription.Id);
+                    UpdateSubscriptionRecord(subscription);
 
                     // Re-read the file and deserialize it
                     readText = File.ReadAllText(SubscriptionsRecordPath);
@@ -70,13 +70,13 @@ namespace TestZeroRecordService.Controllers
         }
 
         // Update an existing subscription record
-        public void UpdateSubscriptionRecord(int subscriptionId)
+        public void UpdateSubscriptionRecord(Subscription subscription)
         {
             string readText = File.ReadAllText(SubscriptionsRecordPath);
 
             var subscriptions = JsonSerializer.Deserialize<List<Subscription>>(readText);
 
-            var updatedSub = subscriptions.Where(x => x.Id == subscriptionId).FirstOrDefault();
+            var updatedSub = subscriptions.Where(x => x.Id == subscription.Id).FirstOrDefault();
 
             // Do whatever in here but moving dates as calling on recurring payment success
             var newDate = updatedSub.PeriodEndDate.AddMonths(1);

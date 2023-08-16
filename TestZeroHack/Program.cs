@@ -15,92 +15,139 @@ var paymentController = new PaymentController();
 var customerController = new CustomerController();
 var recordController = new RecordController();
 
+Console.WriteLine("Welcome to TestZeroHack.");
+Console.WriteLine("What would you like to do:");
+Console.WriteLine("[I]nitial payment");
+Console.WriteLine("[D]eferred payment");
+Console.WriteLine("[R]eccuring payment");
+Console.WriteLine("[C]ancel process");
+var answer = Console.ReadLine()?.ToUpper();
 
-#region Journey Setup + Braintree Customer hack
-// Setup JourneyDetails model as if we went through the flow
-// Do this with console.readline and output product options etc if we want to go harder with it
-var journeyDetails = new JourneyDetails()
+if (answer != null)
 {
-    FirstName = "Sean",
-    LastName = "Keenan",
-    Email = "Sean.Keenan@bennetts.co.uk",
-    Products = new List<Product>()
+    switch (answer)
     {
-        new Product() { Id = 1, Name="Setup", Price=2.0m, StartDate = DateTime.UtcNow, IsActive = true },
-        new Product() { Id = 2, Name="Charge", Price=5.0m, StartDate = DateTime.UtcNow, IsActive = true },
-        new Product() { Id = 3, Name="AProduct", Price=13.0m, StartDate = DateTime.UtcNow, IsActive = true },
+        case "I":
+            TakeInitialPayment();
+            break;
+        case "D":
+            TakeInitialDeferredPayment();
+            break;
+        case "R": 
+            paymentController.RecurringPayments();
+            break;
+        case "C":
+            CancellationProcess();
+            break;
+        default:
+            throw new Exception();
     }
-};
-
-// Setup a customer to use in Braintree
-var customer = customerController.Setup(journeyDetails);
-#endregion
-
-#region After Journey, process initial payment and record the sub & transaction.
-// Build payment request
-bool shouldPaymentFail = false;
-PaymentRequest newPaymentRequest = new()
-{
-    Price = journeyDetails.Products.Sum(x => x.Price),
-    PaymentMethodNonce = shouldPaymentFail ? "failure-nonce" : "fake-valid-nonce"
-};
-var paymentStatus = paymentController.InitialPaymentProcess(newPaymentRequest);
-
-if (paymentStatus.IsSuccess())
-{
-    // Create Subscription
-    var subscription = subscriptionController.CreateSubscription(customer, journeyDetails.Products);
-    // Record Subscription
-    recordController.RecordSubscription(subscription);
-    // Record Transaction
-    recordController.RecordTransaction(paymentStatus.Target, subscription);
 }
-#endregion
+
+void TakeInitialPayment()
+{
+    #region Journey Setup + Braintree Customer hack
+    // Setup JourneyDetails model as if we went through the flow
+    // Do this with console.readline and output product options etc if we want to go harder with it
+    var journeyDetails = new JourneyDetails()
+    {
+        FirstName = "Sean",
+        LastName = "Keenan",
+        Email = "Sean.Keenan@bennetts.co.uk",
+        Products = new List<Product>()
+        {
+            new Product() { Id = 1, Name="Setup", Price=2.0m, StartDate = DateTime.UtcNow, IsActive = true },
+            new Product() { Id = 2, Name="Charge", Price=5.0m, StartDate = DateTime.UtcNow, IsActive = true },
+            new Product() { Id = 3, Name="AProduct", Price=13.0m, StartDate = DateTime.UtcNow, IsActive = true },
+        }
+    };
+
+    // Setup a customer to use in Braintree
+    var customer = customerController.Setup(journeyDetails);
+    #endregion
+
+    #region After Journey, process initial payment and record the sub & transaction.
+    // Build payment request
+    bool shouldPaymentFail = false;
+    PaymentRequest newPaymentRequest = new()
+    {
+        Price = journeyDetails.Products.Sum(x => x.Price),
+        PaymentMethodNonce = shouldPaymentFail ? "failure-nonce" : "fake-valid-nonce"
+    };
+    var paymentStatus = paymentController.InitialPaymentProcess(newPaymentRequest);
+
+    if (paymentStatus.IsSuccess())
+    {
+        // Create Subscription
+        var subscription = subscriptionController.CreateSubscription(customer, journeyDetails.Products);
+        // Record Subscription
+        recordController.RecordSubscription(subscription);
+        // Record Transaction
+        recordController.RecordTransaction(paymentStatus.Target, subscription);
+    }
+    #endregion
+}
 
 
 #region InitialDeferredPayment
-//if (takingInitialDeferredPayment)
-//{
+// SK -This was setup in the original branch, needs rework - Probably wont work.
+// I've just added the journeyDetails here as well which was a change to the Customer.Setup method I made yesterday, might need some more work but you could just comment this method out to build.
+void TakeInitialDeferredPayment()
+{
+    // Setup JourneyDetails model as if we went through the flow
+    // Do this with console.readline and output product options etc if we want to go harder with it
+    var journeyDetails = new JourneyDetails()
+    {
+        FirstName = "Sean",
+        LastName = "Keenan",
+        Email = "Sean.Keenan@bennetts.co.uk",
+        Products = new List<Product>()
+        {
+            new Product() { Id = 1, Name="Setup", Price=2.0m, StartDate = DateTime.UtcNow, IsActive = true },
+            new Product() { Id = 2, Name="Charge", Price=5.0m, StartDate = DateTime.UtcNow, IsActive = true },
+            new Product() { Id = 3, Name="AProduct", Price=13.0m, StartDate = DateTime.UtcNow, IsActive = true },
+        }
+    };
 
-//    // Setup a customer
-//    var newCustomer = customerController.Setup();
+    // Setup a customer
+    var newCustomer = customerController.Setup(journeyDetails);
 
-//    // Setup a subscription, select products etc
-//    var newSubscription = subscriptionController.Setup(newCustomer.Id, 10);
-//    var proRataPrice = subscriptionController.ProRataProducts(newSubscription);
+    // Setup a subscription, select products etc
+    var newSubscription = subscriptionController.Setup(newCustomer.Id, 10);
+    var proRataPrice = subscriptionController.ProRataProducts(newSubscription);
 
-//    var totalPrice = proRataPrice + newSubscription.Products.Sum(x => x.Price);
+    var totalPrice = proRataPrice + newSubscription.Products.Sum(x => x.Price);
 
-//    // Handle initial payment
-//    //// Setup paymentRequest
-//    PaymentRequest newPayment = new()
-//    {
-//        CustomerId = newSubscription.CustomerId,
-//        Price = totalPrice,
-//        PaymentMethodNonce = "fake-valid-nonce"
-//    };
+    // Handle initial payment
+    //// Setup paymentRequest
+    PaymentRequest newPayment = new()
+    {
+        CustomerId = newSubscription.CustomerId,
+        Price = totalPrice,
+        PaymentMethodNonce = "fake-valid-nonce"
+    };
 
-//    //// Attempt payment
-//    try
-//    {
-//        var newPaymentResult = paymentController.Checkout(newPayment);
+    //// Attempt payment
+    try
+    {
+        var newPaymentResult = paymentController.Checkout(newPayment);
 
-//        if ((string)newPaymentResult == "Succeded")
-//        {
-//            // Record subscription
-//            subscriptionController.RecordSubscription(newSubscription);
-//        }
-//        else
-//        {
-//            Console.WriteLine("Something went wrong processing the payment, try again.");
-//            // Not using this for batch processing so no need to handle errors here for now
-//        }
-//    }
-//    catch (Exception x)
-//    {
-//        Console.WriteLine(x);
-//    }
-//}
+        if (newPaymentResult.IsSuccess())
+        {
+            // Record subscription
+            recordController.RecordSubscription(newSubscription);
+        }
+        else
+        {
+            Console.WriteLine("Something went wrong processing the payment, try again.");
+            // Not using this for batch processing so no need to handle errors here for now
+        }
+    }
+    catch (Exception x)
+    {
+        Console.WriteLine(x);
+    }
+}
 #endregion InitialDeferredPayment
 
 
@@ -112,82 +159,35 @@ if (paymentStatus.IsSuccess())
 
 
 #region Cancellation
-////// Cancel day before payment due
+void CancellationProcess()
+{
+    // Cancel day before payment due
 
-////var subscription = subscriptionController.Setup("81827778434");
+    var subscription = subscriptionController.Setup("81827778434");
 
-////Console.WriteLine($"Do you want to cancel this subscription? Access to {subscription.Products.Count} products will end on {subscription.PeriodEndDate}");
-////var answer = Console.ReadLine();
-////if (answer == "1")
-////{
-////    subscription.NextPaymentAttemptDate = null;
-////}
+    Console.WriteLine($"Do you want to cancel this subscription? Access to {subscription.Products.Count} products will end on {subscription.PeriodEndDate}");
+    var answer = Console.ReadLine();
+    if (answer == "1")
+    {
+        subscription.NextPaymentAttemptDate = null;
+    }
+    else if (answer == "2")
+    {
+        var insuranceProduct = subscription.Products.Where(x => x.ProductType == ProductType.Insurance).First();
+        var productType = insuranceProduct.ProductType.ToString();
+        insuranceProduct.PeriodEndDate = DateTime.UtcNow.Date;
+        insuranceProduct.IsActive = false;
+        recordController.UpdateSubscriptionRecord(subscription);
+    }
 
-////var newDate = subscription.NextPaymentAttemptDate == null ? "null" : subscription.NextPaymentAttemptDate.ToString();
-////Console.WriteLine($"Next payment date has been updated to {newDate}");
+    var newDate = subscription.NextPaymentAttemptDate == null ? "null" : subscription.NextPaymentAttemptDate.ToString();
+    Console.WriteLine($"Next payment date has been updated to {newDate}");
+}
 #endregion Cancellation
 
 
 
 //// ---------------------------------------------------- + Insurance
-
-#region RecurringPaymentsInsurance
-//// Attempt payment
-//if (attemptingRecurringInsurance)
-//{
-//    var tc = new TestClock(DateTime.UtcNow.AddDays(daysFromTodayToAttempt));
-//    var duePayments = subscriptionController.GetDuePayments(tc);
-
-//    var duePaymentsThatHaveInsurance = new List<Subscription>();
-//    foreach(var due in duePayments)
-//    {
-//        if (due.Products.Where(x => x.Name == "Insurance").Any())
-//        {
-//            duePaymentsThatHaveInsurance.Add(due);
-//        }
-//    }
-
-
-//    List<PaymentRequest> duePaymentsRequestList = new();
-//    for (var i = 0; i < duePaymentsThatHaveInsurance.Count; i++)
-//    {
-//        duePaymentsRequestList.Add(new PaymentRequest()
-//        {
-//            SubscriptionId = duePaymentsThatHaveInsurance[i].Id,
-//            CustomerId = duePaymentsThatHaveInsurance[i].CustomerId,
-//            Price = duePaymentsThatHaveInsurance[i].Products.Sum(x => x.Price),
-//            PaymentMethodNonce = "fake-valid-nonce",
-//        });
-//    }
-
-//    foreach (var duePaymentRequest in duePaymentsRequestList)
-//    {
-//        try
-//        {
-//            var newPaymentResult = paymentController.Checkout(duePaymentRequest);
-
-//            if ((string)newPaymentResult == "Succeded")
-//            {
-//                // Record payment record
-//                // update nextpaymentdate
-//                //var newSub = subscriptionController.UpdateSubscriptionRecord(duePaymentRequest.SubscriptionId);
-
-//                Console.WriteLine("Processed payment");
-//            }
-//            else
-//            {
-//                Console.WriteLine("Something went wrong processing the renewal, try again.");
-
-//            }
-//        }
-//        catch (Exception x)
-//        {
-//            Console.WriteLine(x);
-//        }
-//    }
-//}
-
-#endregion
 
 #region CancelJustInsuranceProduct 
 //if (cancelJustInsuranceProduct)

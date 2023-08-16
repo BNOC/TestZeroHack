@@ -10,7 +10,7 @@ namespace TestZeroSubscriptionService.Controllers
         public JsonSerializerOptions JsonOptions;
         public SubscriptionController()
         {
-            Path = @"C:\Users\Imsea\source\repos\TestProjects\TestZero\TestZeroHack\TestZeroHack\Database\Subscriptions.json";
+            Path = @"C:\Development\Practise\TestZeroHack\TestZeroHack\Database\Subscriptions.json";
             JsonOptions = new JsonSerializerOptions
             {
                 WriteIndented = true,
