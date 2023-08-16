@@ -18,7 +18,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\TestZeroRecurringPaymentProcessor\TestZeroPaymentService.csproj" />
+    <ProjectReference Include="..\TestZeroPaymentService\TestZeroPaymentService.csproj" />
     <ProjectReference Include="..\TestZeroSubscriptionService\TestZeroSubscriptionService.csproj" />
   </ItemGroup>
 
