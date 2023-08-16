@@ -2,16 +2,19 @@
 using IClock;
 using TestZeroPaymentService.Controllers;
 using TestZeroPaymentService.Models;
+using TestZeroRecordService.Controllers;
 
-var duePaymentsController = new PaymentController();
+var paymentsController = new PaymentController();
+var recordController = new RecordController();
 
-var daysFromTodayToAttempt = 23;
+
+var daysFromTodayToAttempt = 22;
 
 #region RecurringPayments
 // Set system date to whatever is relevant for testing
 var tc = new TestClock(DateTime.UtcNow.AddDays(daysFromTodayToAttempt));
 // Get all payments from the sub db where the NextPaymentDate matches
-var duePayments = duePaymentsController.GetDuePayments(tc);
+var duePayments = paymentsController.GetDuePayments(tc);
 
 // Create a list of paymentRequests to process
 List<PaymentRequest> duePaymentRequests = new();
@@ -26,7 +29,5 @@ for (var i = 0; i < duePayments.Count; i++)
     });
 }
 // Process payments
-duePaymentsController.ProcessDuePayments(duePaymentRequests);
-// Update sub records with new dates
-
+var paymentResults = paymentsController.ProcessDuePayments(duePaymentRequests);
 #endregion RecurringPayments

@@ -1,4 +1,5 @@
-﻿using System.Text.Json;
+﻿using System.Security.Cryptography.X509Certificates;
+using System.Text.Json;
 using TestZeroSubscriptionService.Models;
 
 namespace TestZeroSubscriptionService.Controllers
@@ -88,6 +89,15 @@ namespace TestZeroSubscriptionService.Controllers
                 NextPaymentAttemptDate = DateTime.UtcNow.AddMonths(1).AddDays(-8),
             };
 
+        }
+
+        public Subscription Get(int subscriptionId)
+        {
+            string readText = File.ReadAllText(Path);
+
+            var subscriptions = JsonSerializer.Deserialize<List<Subscription>>(readText);
+
+            return subscriptions.Where(x => x.Id == subscriptionId).SingleOrDefault();
         }
     }
 }

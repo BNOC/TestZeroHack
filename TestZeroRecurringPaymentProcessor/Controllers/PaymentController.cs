@@ -3,18 +3,22 @@ using IClock;
 using System.Text.Json;
 using System.Web.Http;
 using TestZeroPaymentService.Models;
+using TestZeroRecordService.Controllers;
 using TestZeroSubscriptionService.Controllers;
+using TestZeroSubscriptionService.Models;
 
 namespace TestZeroPaymentService.Controllers
 {
     public class PaymentController
     {
         private readonly SubscriptionController _subscriptionController;
+        private readonly RecordController _recordController;
         private readonly BraintreeConfiguration _braintreeConfig;
 
         public PaymentController()
         {
             _subscriptionController = new SubscriptionController();
+            _recordController = new RecordController();
             _braintreeConfig = new BraintreeConfiguration();
         }
         
@@ -100,51 +104,36 @@ namespace TestZeroPaymentService.Controllers
         /// <param name="duePaymentRequests"></param>
         /// <returns></returns>
         /// <exception cref="NotImplementedException"></exception>
-        public void ProcessDuePayments(List<PaymentRequest> duePaymentRequests)
+        public List<Result<Transaction>> ProcessDuePayments(List<PaymentRequest> duePaymentRequests)
         {
+            Console.WriteLine($"{duePaymentRequests.Count} payments to process");
+            var successfulPayments = 0;
+
+            List<Result<Transaction>> paymentResults = new();
+
             // Attempt payment
             foreach (var duePaymentRequest in duePaymentRequests)
             {
-                try
+                paymentResults.Add(this.Checkout(duePaymentRequest));
+
+                // Update sub records with new dates
+                foreach (var paymentResult in paymentResults)
                 {
-                    var newPaymentResult = this.Checkout(duePaymentRequest);
-
-                    if (newPaymentResult.IsSuccess())
+                    if (paymentResult.IsSuccess())
                     {
-                        // Record payment record
-                        // update nextpaymentdate
-                        //var newSub = subscriptionController.UpdateSubscriptionRecord(duePaymentRequest.SubscriptionId);
-                        //Console.WriteLine("UpdatedSub PeriodEndDate should be +1m ahead of the last " + newSub.PeriodEndDate.AddMonths(1));
-                        //Console.WriteLine("UpdatedSub NextPaymentDate should be +1m-8 ahead of the last " + newSub.PeriodEndDate.AddMonths(1).AddDays(-8));
+                        successfulPayments++;
+                        // UpdateSub
+                        _recordController.UpdateSubscriptionRecord(duePaymentRequest.SubscriptionId);
                     }
-                    else
-                    {
-                        Console.WriteLine("Something went wrong processing the renewal, try again.");
 
-                        // Handle failures, will need to change the nonce to other fake nonces and make adjustments in a few places
-                        // https://developer.paypal.com/braintree/docs/guides/recurring-billing/testing-go-live/dotnet/
-                        // Send them to UI to make a payment
-                        // Go to braintree and make payment
-                        Console.WriteLine("We're in here");
-
-                        duePaymentRequest.PaymentMethodNonce = "fake-valid-nonce";
-                        newPaymentResult = this.Checkout(duePaymentRequest);
-
-                        if (newPaymentResult.IsSuccess())
-                        {
-                            // Record payment record
-                            // update nextpaymentdate
-                            //var newSub = subscriptionController.UpdateSubscriptionRecord(duePaymentRequest.SubscriptionId);
-                            //Console.WriteLine("UpdatedSub PeriodEndDate should be +1m ahead of the last " + newSub.PeriodEndDate.AddMonths(1));
-                            //Console.WriteLine("UpdatedSub NextPaymentDate should be +1m-8 ahead of the last " + newSub.PeriodEndDate.AddMonths(1).AddDays(-8));
-                        }
-                    }
-                }
-                catch (Exception x)
-                {
-                    Console.WriteLine(x);
+                    var subscription = _subscriptionController.Get(duePaymentRequest.SubscriptionId);
+                    // Record Transaction
+                    _recordController.RecordTransaction(paymentResult.Target, subscription);
                 }
             }
+
+            Console.WriteLine($"{successfulPayments} Successful Payments taken");
+            return paymentResults;
         }
     }
 }

@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace TestZeroHack.Models
+namespace TestZeroRecordService.Models
 {
     public class Transaction
     {
